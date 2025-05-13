@@ -4,3 +4,4 @@ channels:
 dependencies:
   - pip:
       - dandi==0.66.7
+      - mlcroissant

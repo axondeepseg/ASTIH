@@ -38,7 +38,7 @@ def extract_binary_masks(mask):
     return axon_mask, myelin_mask
 
 def main():
-    metrics = [DiceMetric(), MeanIoU(), PanopticQualityMetric()]
+    metrics = [DiceMetric(), MeanIoU(), PanopticQualityMetric(num_classes=1)]
     metric_names = [metric.__class__.__name__ for metric in metrics]
     columns = ['dataset', 'image', 'class'] + metric_names
     df = pd.DataFrame(columns=columns)
@@ -54,7 +54,7 @@ def main():
             img_fname = gt.name.replace("_seg-axonmyelin-manual.png", ".png")
             ax_pred_fname = gt.name.replace("_seg-axonmyelin-manual.png", "_seg-axon.png")
             my_pred_fname = gt.name.replace("_seg-axonmyelin-manual.png", "_seg-myelin.png")
-            assert testset_path / ax_pred_fname.exists() and testset_path / my_pred_fname.exists(), f"Predictions not found for {img_fname}"
+            assert (testset_path / ax_pred_fname).exists() and (testset_path / my_pred_fname).exists(), f"Predictions not found for {img_fname}"
 
             # load GT
             gt_im = cv2.imread(str(gt), cv2.IMREAD_GRAYSCALE)[None]

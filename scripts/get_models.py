@@ -1,7 +1,6 @@
-from AxonDeepSeg.download_model import download_model
 from pathlib import Path
 
-from get_data import DATASETS
+from get_data import DATASETS, download_data
 
 
 def main():
@@ -11,8 +10,10 @@ def main():
 
     # Download models
     for dataset in DATASETS:
+        print('-------------------------')
         print(f"Downloading {dataset.name} model...")
-        model_path = download_model(dataset, model_dir)
+        model_path = download_data(dataset.model_release, model_dir)
+        print(f"Model downloaded to {model_path}")
 
 
 if __name__ == "__main__":

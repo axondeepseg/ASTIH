@@ -3,7 +3,7 @@ channels:
   - defaults
 dependencies:
   - pip:
-      - dandi==0.66.7
+      - dandi
       - mlcroissant
-      - axondeepseg
+      - axondeepseg==5.0.4
       - monai

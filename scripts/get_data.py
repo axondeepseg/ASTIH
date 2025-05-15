@@ -64,6 +64,14 @@ DATASETS = [
     )
 ]
 
+def download_data(url: str, dst_dir: str):
+    """Download data and return path to unzipped data."""
+    r = requests.get(url)
+    assert r.ok, f"Failed to download {url}"
+    z = zipfile.ZipFile(io.BytesIO(r.content))
+    z.extractall(dst_dir)
+    return Path(dst_dir) / z.namelist()[0]
+
 def index_bids_dataset(data_dir: Path):
     """
     Index the BIDS dataset and return a list of image for which a GT exists.
@@ -117,11 +125,7 @@ def split_dataset(dset: ASTIHDataset, dset_path: Path, output_dir: Path):
 
     # If the test set is external, download it
     if dset.test_set_type == 'external':
-        r = requests.get(dset.test_set_url)
-        assert r.ok, f"Failed to download {dset.test_set_url}"
-        z = zipfile.ZipFile(io.BytesIO(r.content))
-        z.extractall(dset_path.parent)
-        testset_path = Path(dset_path.parent) / z.namelist()[0]
+        testset_path = download_data(dset_path.parent, dset.test_set_url)
         testset_index = index_bids_dataset(testset_path)
         for indexed_img in testset_index:
             gts = find_gts(testset_path, indexed_img)
@@ -137,7 +141,7 @@ def main(make_splits: bool):
 
     # download dandisets
     urls = [dataset.url for dataset in DATASETS]
-    # download(urls, data_dir)
+    download(urls, data_dir)
 
     if make_splits:
         # Create a directory to store the splits

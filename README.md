@@ -6,6 +6,11 @@ The Axon Segmentation Training Initiative for Histology (ASTIH) is a growing col
 
 ## 💾 Getting started
 [steps to get data]
+```
+conda create python==3.12.9 -n astih
+conda activate astih
+conda env update --file environment.yaml
+```
 
 ## ✍️ Contributing
 We welcome contributions of new data that align with the goals of ASTIH. If you have a relevant dataset you would like to share, please contact us at axondeepseg@googlegroups.com

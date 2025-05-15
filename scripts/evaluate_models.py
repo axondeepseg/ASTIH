@@ -53,6 +53,8 @@ def main():
     assert data_splits_path.exists(), "Data splits directory does not exist. Please run get_data.py with --make-splits arg first."
     
     for dset in DATASETS:
+        print(f"Evaluation for {dset.name} dataset...")
+
         testset_path = data_splits_path / dset.name / 'test'
         gts = list(testset_path.glob("*_seg-axonmyelin-manual.png"))
         for gt in gts:
@@ -90,8 +92,8 @@ def main():
                 for metric in metrics:
                     if isinstance(metric, PanopticQualityMetric):
                         # For PanopticQualityMetric, we need to convert the masks to labels
-                        pred_labels = torch.from_numpy(label(pred.numpy().astype(np.uint8))).float()
-                        gt_labels = torch.from_numpy(label(gt.numpy().astype(np.uint8))).float()
+                        pred_labels = torch.from_numpy(label(pred.numpy().astype(np.uint16))).float()
+                        gt_labels = torch.from_numpy(label(gt.numpy().astype(np.uint16))).float()
                         pred_labels = torch.stack([pred_labels, pred], dim=1)
                         gt_labels = torch.stack([gt_labels, gt], dim=1)
                         value = compute_metrics(pred_labels, gt_labels, metric)

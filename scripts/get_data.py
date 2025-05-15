@@ -1,5 +1,5 @@
 from pathlib import Path
-from dandi.download import download
+from dandi.download import download, DownloadExisting
 import argparse
 import shutil
 import requests, zipfile, io
@@ -125,7 +125,7 @@ def split_dataset(dset: ASTIHDataset, dset_path: Path, output_dir: Path):
 
     # If the test set is external, download it
     if dset.test_set_type == 'external':
-        testset_path = download_data(dset_path.parent, dset.test_set_url)
+        testset_path = download_data(dset.test_set_url, dset_path.parent)
         testset_index = index_bids_dataset(testset_path)
         for indexed_img in testset_index:
             gts = find_gts(testset_path, indexed_img)
@@ -141,7 +141,7 @@ def main(make_splits: bool):
 
     # download dandisets
     urls = [dataset.url for dataset in DATASETS]
-    download(urls, data_dir)
+    download(urls, data_dir, existing=DownloadExisting.OVERWRITE_DIFFERENT)
 
     if make_splits:
         # Create a directory to store the splits

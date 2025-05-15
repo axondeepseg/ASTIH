@@ -64,8 +64,10 @@ def main():
             # load predictions
             ax_pred = cv2.imread(str(testset_path / ax_pred_fname), cv2.IMREAD_GRAYSCALE)[None]
             ax_pred = np.floor(ax_pred / np.max(ax_pred) * 255).astype(np.uint8)
+            ax_pred, _ = extract_binary_masks(ax_pred)
             my_pred = cv2.imread(str(testset_path / my_pred_fname), cv2.IMREAD_GRAYSCALE)[None]
             my_pred = np.floor(my_pred / np.max(my_pred) * 255).astype(np.uint8)
+            my_pred, _ = extract_binary_masks(my_pred)
 
             classwise_pairs = [
                 ('axon', ax_pred, gt_ax),

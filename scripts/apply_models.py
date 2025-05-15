@@ -1,4 +1,4 @@
-from AxonDeepSeg.segment import get_model_type, get_model_input_format
+from AxonDeepSeg.segment import get_model_type
 from AxonDeepSeg.apply_model import axon_segmentation
 from AxonDeepSeg.ads_utils import get_imshape, imread, imwrite
 from torch import cuda
@@ -28,7 +28,8 @@ def main(dset_name: None):
         model_path = Path("models") / model_name
 
         # ensure input imgs have the expected nb of channels; if not, overwrite input
-        (fileformat, n_channels) = get_model_input_format(model_path)
+        fileformat = '.png'
+        n_channels = 1
         for img_path in input_imgs:
             imshape = get_imshape(str(img_path))
             needs_conversion = not (imshape[-1] == n_channels)

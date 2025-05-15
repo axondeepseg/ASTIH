@@ -12,6 +12,15 @@ conda activate astih
 conda env update --file environment.yaml
 ```
 
+```
+python scripts/get_data.py --make-
+```
+
+```
+python scripts/get_models.py
+python scripts/apply_models.py
+```
+
 ## ✍️ Contributing
 We welcome contributions of new data that align with the goals of ASTIH. If you have a relevant dataset you would like to share, please contact us at axondeepseg@googlegroups.com
 

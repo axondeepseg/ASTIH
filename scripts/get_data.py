@@ -1,5 +1,7 @@
 from pathlib import Path
 from dandi.download import download
+import argparse
+import shutil
 
 
 class ASTIHDataset:
@@ -61,15 +63,84 @@ DATASETS = [
     )
 ]
 
-def main():
+def index_bids_dataset(data_dir: Path):
+    """
+    Index the BIDS dataset and return a list of image for which a GT exists.
+    """
+    filenames = []
+
+    # Look at derivative files
+    for subject_dir in (data_dir / "derivatives" / "labels").glob("sub-*"):
+        # every annotated image will have an axonmyelin mask
+        for mask in (subject_dir / "micr").glob("*_seg-axonmyelin-manual.png"):
+            # Get the corresponding image
+            subject = subject_dir.name
+            img_fname = Path(data_dir) / subject / "micr" / mask.name.replace("_seg-axonmyelin-manual.png", ".png")
+            assert img_fname.exists(), f"Image {img_fname} does not exist"
+            filenames.append(img_fname)
+    return filenames
+
+def split_dataset(dset: ASTIHDataset, dset_path: Path, output_dir: Path):
+    """
+    Splits the dataset into training and testing sets.
+    """
+    train_dir = output_dir / "train"
+    test_dir = output_dir / "test"
+    train_dir.mkdir(parents=True, exist_ok=True)
+    test_dir.mkdir(parents=True, exist_ok=True)
+    index = index_bids_dataset(dset_path)
+
+    # utility function to find corresponding GTs
+    def find_gts(dset_path, img_path, subject):
+        gt_location = dset_path / "derivatives" / "labels" / subject / "micr"
+        gts = list(gt_location.glob(f"{img_path.stem}_seg-*-manual.png"))
+    
+    def copy_files_associated(img_path, gt_paths, dest_dir):
+        shutil.copy(img_path, dest_dir)
+        for gt_path in gt_paths:
+            shutil.copy(gt_path, dest_dir)
+
+    for indexed_img in index:
+        subject = indexed_img.name.split("_")[0]
+        gts = find_gts(dset_path, indexed_img, subject)
+        if dset.test_set_type == 'internal' and subject in dset.test_subjects:
+            copy_files_associated(indexed_img, gts, test_dir)
+        else:
+            copy_files_associated(indexed_img, gts, train_dir)
+
+
+
+def main(make_splits: bool):
     # Create a directory to store the downloaded data
     data_dir = Path("data")
     data_dir.mkdir(exist_ok=True)
 
     # download dandisets
     urls = [dataset.url for dataset in DATASETS]
-    download(urls, data_dir)
+    # download(urls, data_dir)
+
+    if make_splits:
+        # Create a directory to store the splits
+        splits_dir = data_dir / "splits"
+        splits_dir.mkdir(exist_ok=True)
+
+        for dataset in DATASETS:
+            dataset_path = data_dir / dataset.dandi_id
+            # Create a directory for each dataset
+            dataset_split_dir = splits_dir / dataset.name
+            dataset_split_dir.mkdir(exist_ok=True)
+
+            # Split the dataset
+            split_dataset(dataset, dataset_path, dataset_split_dir)
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Download and split datasets.")
+    parser.add_argument(
+        "--make-splits",
+        action="store_true",
+        help="Make splits for the datasets.",
+    )
+    args = parser.parse_args()
+
+    main(args.make_splits)

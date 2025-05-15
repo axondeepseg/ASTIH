@@ -21,10 +21,11 @@ def compute_metrics(pred, gt, metric):
         the computed metric
     """
     if isinstance(metric, PanopticQualityMetric):
-        value = metric(pred, gt).aggregate().mean()
+        metric.reset()
+        metric(pred, gt)
+        value = metric.aggregate().mean()
     else:
         value = metric(pred, gt)
-    print(value)
     return value.item()
 
 def extract_binary_masks(mask):
@@ -93,7 +94,7 @@ def main():
                         gt_labels = torch.from_numpy(label(gt.numpy().astype(np.uint8))).float()
                         pred_labels = torch.stack([pred_labels, pred], dim=1)
                         gt_labels = torch.stack([gt_labels, gt], dim=1)
-                        value = compute_metrics([pred_labels], [gt_labels], metric)
+                        value = compute_metrics(pred_labels, gt_labels, metric)
                     else:
                         value = compute_metrics([pred], [gt], metric)
                     row[metric.__class__.__name__] = value

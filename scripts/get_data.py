@@ -2,6 +2,7 @@ from pathlib import Path
 from dandi.download import download
 import argparse
 import shutil
+import requests, zipfile, io
 
 
 class ASTIHDataset:
@@ -56,8 +57,8 @@ DATASETS = [
         url="https://dandiarchive.org/dandiset/001440/0.250509.1913",
         desc="BF Images of Rat Nerves at Different Regeneration Stages with Axon and Myelin Segmentations",
         test_set=[
-            "sub-rat2",
-            "sub-rat7"
+            "sub-uoftRat02",
+            "sub-uoftRat07"
         ],
         model_url="https://github.com/axondeepseg/default-BF-model/releases/download/r20240405/model_seg_rat_axon-myelin_bf_light.zip"
     )
@@ -91,10 +92,14 @@ def split_dataset(dset: ASTIHDataset, dset_path: Path, output_dir: Path):
     index = index_bids_dataset(dset_path)
 
     # utility function to find corresponding GTs
-    def find_gts(dset_path, img_path, subject):
+    def find_gts(dset_path, img_path):
+        subject = img_path.name.split("_")[0]
         gt_location = dset_path / "derivatives" / "labels" / subject / "micr"
-        gts = list(gt_location.glob(f"{img_path.stem}_seg-*-manual.png"))
+        pattern = f"{img_path.stem}_seg-*-manual.png"
+        gts = list(gt_location.glob(pattern))
+        return gts
     
+    # utility to conveniently copy files
     def copy_files_associated(img_path, gt_paths, dest_dir):
         shutil.copy(img_path, dest_dir)
         for gt_path in gt_paths:
@@ -102,11 +107,26 @@ def split_dataset(dset: ASTIHDataset, dset_path: Path, output_dir: Path):
 
     for indexed_img in index:
         subject = indexed_img.name.split("_")[0]
-        gts = find_gts(dset_path, indexed_img, subject)
+        gts = find_gts(dset_path, indexed_img)
+        assert len(gts) > 0, f"No GT found for {indexed_img}"
+
         if dset.test_set_type == 'internal' and subject in dset.test_subjects:
             copy_files_associated(indexed_img, gts, test_dir)
         else:
             copy_files_associated(indexed_img, gts, train_dir)
+
+    # If the test set is external, download it
+    if dset.test_set_type == 'external':
+        r = requests.get(dset.test_set_url)
+        assert r.ok, f"Failed to download {dset.test_set_url}"
+        z = zipfile.ZipFile(io.BytesIO(r.content))
+        z.extractall(dset_path.parent)
+        testset_path = Path(dset_path.parent) / z.namelist()[0]
+        testset_index = index_bids_dataset(testset_path)
+        for indexed_img in testset_index:
+            gts = find_gts(testset_path, indexed_img)
+            assert len(gts) > 0, f"No GT found for {indexed_img}"
+            copy_files_associated(indexed_img, gts, test_dir)
 
 
 
@@ -131,6 +151,7 @@ def main(make_splits: bool):
             dataset_split_dir.mkdir(exist_ok=True)
 
             # Split the dataset
+            print(f"Splitting {dataset.name} dataset...")
             split_dataset(dataset, dataset_path, dataset_split_dir)
 
 

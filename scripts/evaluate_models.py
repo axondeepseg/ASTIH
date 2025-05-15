@@ -5,6 +5,7 @@ import cv2
 import numpy as np
 import pandas as pd
 import warnings
+from skimage.measure import label
 
 from get_data import DATASETS
 
@@ -82,7 +83,15 @@ def main():
                     'class': class_name
                 }
                 for metric in metrics:
-                    value = compute_metrics([pred], [gt], metric)
+                    if isinstance(metric, PanopticQualityMetric):
+                        # For PanopticQualityMetric, we need to convert the masks to labels
+                        pred_labels = torch.from_numpy(label(pred.numpy().astype(np.uint8))).float()
+                        gt_labels = torch.from_numpy(label(gt.numpy().astype(np.uint8))).float()
+                        pred_labels = torch.stack([pred, pred_labels], dim=0)
+                        gt_labels = torch.stack([gt, gt_labels], dim=0)
+                        value = compute_metrics([pred_labels], [gt_labels], metric)
+                    else:
+                        value = compute_metrics([pred], [gt], metric)
                     row[metric.__class__.__name__] = value
                 df = pd.concat([df, pd.DataFrame([row])], ignore_index=True)
 

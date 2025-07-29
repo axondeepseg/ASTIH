@@ -2,21 +2,44 @@ from pathlib import Path
 from monai.metrics import (
     DiceMetric, MeanIoU, 
     HausdorffDistanceMetric, SurfaceDistanceMetric,
-    PanopticQualityMetric, AveragePrecisionMetric,
+    PanopticQualityMetric
 )
 from pycocotools.mask import encode as mask_encode
 from pycocotools.mask import iou as mask_iou
-
+from AxonDeepSeg.compute_morphometrics import get_watershed_segmentation
 import torch
 import cv2
 import numpy as np
 import pandas as pd
 import warnings
-from skimage.measure import label
+from skimage.measure import label, regionprops
 
 from get_data import DATASETS
 
-def compute_map(pred_mask, gt_mask):
+
+def get_instance_segmentation(im_axon, im_myelin):    
+    """
+    Get instance segmentation from axon and myelin masks using a marker-controlled
+    watershed algorithm to separate adjacent fibers.
+    
+    Args:
+        im_axon: Axon mask
+        im_myelin: Myelin mask
+    
+    Returns:
+        Instance segmentation mask
+    """
+    axon_labels = label(im_axon.numpy())
+    axon_objects = regionprops(axon_labels)
+    index_centroids = (
+        [int(property.centroid[0]) for property in axon_objects],
+        [int(property.centroid[1]) for property in axon_objects]
+    )
+    instance_seg = get_watershed_segmentation(im_axon.numpy(), im_myelin.numpy(), index_centroids)
+    return torch.from_numpy(instance_seg)
+
+
+def compute_map(pred_ax, pred_my, gt_ax, gt_my):
     """
     Compute mAP for binary segmentation masks containing multiple objects
     
@@ -28,8 +51,8 @@ def compute_map(pred_mask, gt_mask):
         mAP score
     """
     # Convert binary masks to instance segmentations
-    pred_instances = label(pred_mask.squeeze().numpy())
-    gt_instances = label(gt_mask.squeeze().numpy())
+    pred_instances = get_instance_segmentation(pred_ax, pred_my)
+    gt_instances = get_instance_segmentation(gt_ax, gt_my)
     
     # Convert to COCO format
     pred_masks = []
@@ -46,7 +69,7 @@ def compute_map(pred_mask, gt_mask):
     ious = np.zeros((len(pred_masks), len(gt_masks)))
     for i, p_mask in enumerate(pred_masks):
         for j, g_mask in enumerate(gt_masks):
-            ious[i, j] = mask_iou([p_mask], [g_mask])[0][0]
+            ious[i, j] = mask_iou([p_mask], [g_mask], [0])[0][0]
     
     # Calculate AP at IoU threshold of 0.5
     matched_gt = set()
@@ -113,7 +136,6 @@ def main():
         MeanIoU(), 
         HausdorffDistanceMetric(), 
         SurfaceDistanceMetric(),
-        AveragePrecisionMetric(),
     ]
     metric_names = [metric.__class__.__name__ for metric in metrics]
     columns = ['dataset', 'image', 'class'] + metric_names
@@ -167,13 +189,19 @@ def main():
                         pred_labels = torch.stack([pred_labels, pred], dim=1)
                         gt_labels = torch.stack([gt_labels, gt], dim=1)
                         value = compute_metrics(pred_labels, gt_labels, metric)
-                    elif isinstance(metric, AveragePrecisionMetric):
-                        # For AveragePrecisionMetric, we need to compute mAP
-                        value = compute_map(pred, gt)
                     else:
                         value = compute_metrics([pred], [gt], metric)
                     row[metric.__class__.__name__] = value
                 df = pd.concat([df, pd.DataFrame([row])], ignore_index=True)
+            # mAP is computed once per image, not per class
+            map_value = compute_map(ax_pred, my_pred, gt_ax, gt_my)
+            row = {
+                'dataset': dset.name,
+                'image': img_fname,
+                'class': 'axon',
+            }
+            row['MeanAveragePrecision'] = map_value
+            df = pd.concat([df, pd.DataFrame([row])], ignore_index=True)
 
     # Export the dataframe to a CSV file
     df.to_csv('metrics.csv', index=False)

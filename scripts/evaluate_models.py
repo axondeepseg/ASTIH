@@ -14,6 +14,48 @@ from skimage.measure import label
 
 from get_data import DATASETS
 
+def compute_map(pred_mask, gt_mask):
+    """
+    Compute mAP for binary segmentation masks containing multiple objects
+    
+    Args:
+        pred_mask: Binary prediction mask
+        gt_mask: Binary ground truth mask
+    
+    Returns:
+        mAP score
+    """
+    # 1. Convert binary masks to instance segmentations
+    pred_instances = label(pred_mask.squeeze().numpy())
+    gt_instances = label(gt_mask.squeeze().numpy())
+    
+    # 2. Use MONAI's AveragePrecisionMetric
+    ap_metric = AveragePrecisionMetric(
+        include_background=False,
+        reduction="mean",
+        get_not_nans=True
+    )
+    
+    # Convert instances to one-hot encoding
+    num_pred_instances = pred_instances.max()
+    num_gt_instances = gt_instances.max()
+    
+    # Create one-hot tensors
+    pred_onehot = torch.zeros(1, num_pred_instances + 1, *pred_instances.shape)
+    gt_onehot = torch.zeros(1, num_gt_instances + 1, *gt_instances.shape)
+    
+    # Fill one-hot tensors
+    for i in range(1, num_pred_instances + 1):
+        pred_onehot[0, i][pred_instances == i] = 1
+    
+    for i in range(1, num_gt_instances + 1):
+        gt_onehot[0, i][gt_instances == i] = 1
+    
+    # Compute AP
+    ap_metric(pred_onehot[:, 1:], gt_onehot[:, 1:])  # Exclude background
+    map_score = ap_metric.aggregate().item()
+    
+    return map_score
 
 def compute_metrics(pred, gt, metric):
     """
@@ -108,6 +150,9 @@ def main():
                         pred_labels = torch.stack([pred_labels, pred], dim=1)
                         gt_labels = torch.stack([gt_labels, gt], dim=1)
                         value = compute_metrics(pred_labels, gt_labels, metric)
+                    elif isinstance(metric, AveragePrecisionMetric):
+                        # For AveragePrecisionMetric, we need to compute mAP
+                        value = compute_map(pred, gt)
                     else:
                         value = compute_metrics([pred], [gt], metric)
                     row[metric.__class__.__name__] = value

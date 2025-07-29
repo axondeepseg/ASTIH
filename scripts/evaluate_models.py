@@ -1,7 +1,8 @@
 from pathlib import Path
 from monai.metrics import (
-    DiceMetric, PanopticQualityMetric, MeanIoU, 
+    DiceMetric, MeanIoU, 
     HausdorffDistanceMetric, SurfaceDistanceMetric,
+    PanopticQualityMetric, AveragePrecisionMetric,
 )
 
 import torch
@@ -48,7 +49,13 @@ def extract_binary_masks(mask):
     return axon_mask, myelin_mask
 
 def main():
-    metrics = [DiceMetric(), MeanIoU(), HausdorffDistanceMetric(), SurfaceDistanceMetric()] #, PanopticQualityMetric(num_classes=1)]
+    metrics = [
+        DiceMetric(), 
+        MeanIoU(), 
+        HausdorffDistanceMetric(), 
+        SurfaceDistanceMetric(),
+        AveragePrecisionMetric(),
+    ]
     metric_names = [metric.__class__.__name__ for metric in metrics]
     columns = ['dataset', 'image', 'class'] + metric_names
     df = pd.DataFrame(columns=columns)

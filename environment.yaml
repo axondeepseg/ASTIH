@@ -8,3 +8,4 @@ dependencies:
       - axondeepseg==5.0.4
       - monai
       - opencv-python==4.8.1.78
+      - pycocotools

@@ -4,6 +4,8 @@ from monai.metrics import (
     HausdorffDistanceMetric, SurfaceDistanceMetric,
     PanopticQualityMetric, AveragePrecisionMetric,
 )
+from pycocotools.mask import encode as mask_encode
+from pycocotools.mask import iou as mask_iou
 
 import torch
 import cv2
@@ -25,37 +27,52 @@ def compute_map(pred_mask, gt_mask):
     Returns:
         mAP score
     """
-    # 1. Convert binary masks to instance segmentations
+    # Convert binary masks to instance segmentations
     pred_instances = label(pred_mask.squeeze().numpy())
     gt_instances = label(gt_mask.squeeze().numpy())
     
-    # 2. Use MONAI's AveragePrecisionMetric
-    ap_metric = AveragePrecisionMetric(
-        include_background=False,
-        reduction="mean",
-        get_not_nans=True
-    )
+    # Convert to COCO format
+    pred_masks = []
+    for i in range(1, np.max(pred_instances) + 1):
+        mask = (pred_instances == i).astype(np.uint8)
+        pred_masks.append(mask_encode(np.asfortranarray(mask)))
     
-    # Convert instances to one-hot encoding
-    num_pred_instances = pred_instances.max()
-    num_gt_instances = gt_instances.max()
+    gt_masks = []
+    for i in range(1, np.max(gt_instances) + 1):
+        mask = (gt_instances == i).astype(np.uint8)
+        gt_masks.append(mask_encode(np.asfortranarray(mask)))
     
-    # Create one-hot tensors
-    pred_onehot = torch.zeros(1, num_pred_instances + 1, *pred_instances.shape)
-    gt_onehot = torch.zeros(1, num_gt_instances + 1, *gt_instances.shape)
+    # Compute IoUs between all masks
+    ious = np.zeros((len(pred_masks), len(gt_masks)))
+    for i, p_mask in enumerate(pred_masks):
+        for j, g_mask in enumerate(gt_masks):
+            ious[i, j] = mask_iou([p_mask], [g_mask])[0][0]
     
-    # Fill one-hot tensors
-    for i in range(1, num_pred_instances + 1):
-        pred_onehot[0, i][pred_instances == i] = 1
+    # Calculate AP at IoU threshold of 0.5
+    matched_gt = set()
+    tp = 0
     
-    for i in range(1, num_gt_instances + 1):
-        gt_onehot[0, i][gt_instances == i] = 1
+    for i in range(len(pred_masks)):
+        best_iou = 0
+        best_gt = -1
+        
+        for j in range(len(gt_masks)):
+            if ious[i, j] > best_iou:
+                best_iou = ious[i, j]
+                best_gt = j
+        
+        if best_iou > 0.5 and best_gt not in matched_gt:
+            tp += 1
+            matched_gt.add(best_gt)
     
-    # Compute AP
-    ap_metric(pred_onehot[:, 1:], gt_onehot[:, 1:])  # Exclude background
-    map_score = ap_metric.aggregate().item()
+    # Calculate precision and recall
+    precision = tp / len(pred_masks) if len(pred_masks) > 0 else 0
+    recall = tp / len(gt_masks) if len(gt_masks) > 0 else 0
     
-    return map_score
+    # Simple AP approximation
+    ap = precision * recall
+    
+    return ap
 
 def compute_metrics(pred, gt, metric):
     """

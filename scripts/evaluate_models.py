@@ -6,7 +6,7 @@ from monai.metrics import (
 )
 from pycocotools.mask import encode as mask_encode
 from pycocotools.mask import iou as mask_iou
-from AxonDeepSeg.compute_morphometrics import get_watershed_segmentation
+from AxonDeepSeg.morphometrics.compute_morphometrics import get_watershed_segmentation
 import torch
 import cv2
 import numpy as np
@@ -36,7 +36,7 @@ def get_instance_segmentation(im_axon, im_myelin):
         [int(property.centroid[1]) for property in axon_objects]
     )
     instance_seg = get_watershed_segmentation(im_axon.numpy(), im_myelin.numpy(), index_centroids)
-    return torch.from_numpy(instance_seg)
+    return instance_seg
 
 
 def compute_map(pred_ax, pred_my, gt_ax, gt_my):

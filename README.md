@@ -1,6 +1,7 @@
 # 🧠 ASTIH: Axon Segmentation Training Initiative for Histology
 The Axon Segmentation Training Initiative for Histology (ASTIH) is a growing collection of publicly available datasets for axon and myelin segmentation in histology images. This initiative aims to foster the development of robust and generalizable deep learning models applicable across diverse biological contexts and imaging techniques. By providing a wide range of data spanning multiple species, microscopy modalities, and resolutions, ASTIH seeks to bridge the gap between fundamental research and translational applications in neuroscience and pathology. We are committed to continuously maintain and expand this collection with new datasets in the future. 
 
+<!--
 **Fig. 1**
 Images taken from the TEM1 dataset. Scalebars represent 1 micron. (A) Example image; (B) Other example with axon (green) and myelin (purple) ground-truth masks overlaid.
 ![img-tem1](figures/20250515_neurips2025_fig-tem1.png)
@@ -19,6 +20,8 @@ Images taken from the SEM1 dataset. Scalebars represent 30 microns. (A) Example 
 Images taken from the BF1 dataset. (A) Example image. Scalebar represent 100 microns; (B) Image with axon (green) and myelin (pink) ground-truth masks overlaid. Scalebar represent 50 microns.
 
 ![img-bf1](figures/20250515_neurips2025_fig-bf1.png)
+-->
+![img-astih](docs/astih_datasets.png)
 
 ## 💾 Getting started
 #### Clone the repo

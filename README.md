@@ -21,6 +21,12 @@ Images taken from the BF1 dataset. (A) Example image. Scalebar represent 100 mic
 ![img-bf1](figures/20250515_neurips2025_fig-bf1.png)
 
 ## 💾 Getting started
+#### Clone the repo
+```
+git clone https://github.com/axondeeepseg/ASTIH.git
+cd ASTIH
+```
+
 #### Setup a virtual environment
 ```
 conda create python==3.12.9 -n astih

@@ -123,7 +123,7 @@
 
         <!-- CTA Buttons -->
         <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4 mb-16 animate-fade-in-up opacity-0" style="animation-delay: 0.4s;">
-            <a href="https://github.com/axondeepseg/astih" class="px-8 py-3.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition-all shadow-lg shadow-indigo-600/25 hover:shadow-indigo-600/40 w-full sm:w-auto">
+            <a href="https://github.com/axondeepseg/ASTIH/tree/main?tab=readme-ov-file#-getting-started" class="px-8 py-3.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition-all shadow-lg shadow-indigo-600/25 hover:shadow-indigo-600/40 w-full sm:w-auto">
                 Get Started
             </a>
             <a href="nope" class="px-8 py-3.5 rounded-lg glass-panel hover:bg-slate-800 text-slate-200 font-medium transition-all w-full sm:w-auto flex items-center justify-center space-x-2">
@@ -170,47 +170,94 @@
             </div>
         </div>
 
-        <!-- Features Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-24 w-full animate-fade-in-up opacity-0" style="animation-delay: 0.6s;">
-            <!-- Feature 1 -->
-            <div class="glass-panel p-6 rounded-2xl text-left hover:border-indigo-500/30 transition-colors group">
-                <div class="w-12 h-12 bg-indigo-500/10 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <i data-lucide="feather" class="text-indigo-400"></i>
+
+        <!-- Dataset Samples / Visuals Section -->
+        <div class="w-full mt-32 animate-fade-in-up opacity-0 text-center" style="animation-delay: 0.7s;">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Dataset Samples</h2>
+            <p class="text-slate-400 mb-12">Visual examples from the ASTIH collection.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Image Card 1 -->
+                <div class="glass-panel rounded-xl overflow-hidden glass-card-hover transition-all duration-300 group">
+                    <div class="h-48 bg-slate-800/50 w-full overflow-hidden relative">
+                         <!-- UPDATE SRC: Point to your actual file in /figs/ -->
+                        <img src="figs/sample_sem.png" alt="SEM Sample" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" 
+                             onerror="this.src='https://placehold.co/600x400/1e293b/475569?text=Image+Missing';">
+                        <div class="absolute bottom-2 left-2 px-2 py-1 bg-black/60 rounded text-xs text-white backdrop-blur-sm">SEM</div>
+                    </div>
+                    <div class="p-4 text-left">
+                        <h4 class="font-medium text-slate-200">Scanning Electron Microscopy</h4>
+                        <p class="text-xs text-slate-500 mt-1">High resolution myelin contrast.</p>
+                    </div>
                 </div>
-                <h3 class="text-lg font-semibold mb-2">Lightweight</h3>
-                <p class="text-slate-400 text-sm leading-relaxed">
-                    Less than 5kb gzipped. No external dependencies, ensuring your project stays fast and lean.
-                </p>
+
+                <!-- Image Card 2 -->
+                <div class="glass-panel rounded-xl overflow-hidden glass-card-hover transition-all duration-300 group">
+                    <div class="h-48 bg-slate-800/50 w-full overflow-hidden relative">
+                        <!-- UPDATE SRC: Point to your actual file in /figs/ -->
+                        <img src="figs/sample_tem.png" alt="TEM Sample" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+                             onerror="this.src='https://placehold.co/600x400/1e293b/475569?text=Image+Missing';">
+                        <div class="absolute bottom-2 left-2 px-2 py-1 bg-black/60 rounded text-xs text-white backdrop-blur-sm">TEM</div>
+                    </div>
+                    <div class="p-4 text-left">
+                        <h4 class="font-medium text-slate-200">Transmission Electron Microscopy</h4>
+                        <p class="text-xs text-slate-500 mt-1">Detailed organelle visibility.</p>
+                    </div>
+                </div>
+
+                <!-- Image Card 3 -->
+                <div class="glass-panel rounded-xl overflow-hidden glass-card-hover transition-all duration-300 group">
+                    <div class="h-48 bg-slate-800/50 w-full overflow-hidden relative">
+                        <!-- UPDATE SRC: Point to your actual file in /figs/ -->
+                        <img src="figs/sample_om.png" alt="OM Sample" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+                             onerror="this.src='https://placehold.co/600x400/1e293b/475569?text=Image+Missing';">
+                        <div class="absolute bottom-2 left-2 px-2 py-1 bg-black/60 rounded text-xs text-white backdrop-blur-sm">Optical</div>
+                    </div>
+                    <div class="p-4 text-left">
+                        <h4 class="font-medium text-slate-200">Optical Microscopy</h4>
+                        <p class="text-xs text-slate-500 mt-1">Standard histology stainings.</p>
+                    </div>
+                </div>
+
+                <!-- Image Card 4 -->
+                <div class="glass-panel rounded-xl overflow-hidden glass-card-hover transition-all duration-300 group">
+                    <div class="h-48 bg-slate-800/50 w-full overflow-hidden relative">
+                        <!-- UPDATE SRC: Point to your actual file in /figs/ -->
+                        <img src="figs/sample_extra1.png" alt="Extra Sample 1" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+                                onerror="this.src='https://placehold.co/600x400/1e293b/475569?text=Image+Missing';">
+                        <div class="absolute bottom-2 left-2 px-2 py-1 bg-black/60 rounded text-xs text-white backdrop-blur-sm">Modality 4</div>
+                    </div>
+                    <div class="p-4 text-left">
+                        <h4 class="font-medium text-slate-200">Another Modality</h4>
+                        <p class="text-xs text-slate-500 mt-1">Description of this dataset type.</p>
+                    </div>
+                </div>
+
+                <!-- Image Card 5 -->
+                <div class="glass-panel rounded-xl overflow-hidden glass-card-hover transition-all duration-300 group">
+                    <div class="h-48 bg-slate-800/50 w-full overflow-hidden relative">
+                        <!-- UPDATE SRC: Point to your actual file in /figs/ -->
+                        <img src="figs/sample_extra2.png" alt="Extra Sample 2" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+                                onerror="this.src='https://placehold.co/600x400/1e293b/475569?text=Image+Missing';">
+                        <div class="absolute bottom-2 left-2 px-2 py-1 bg-black/60 rounded text-xs text-white backdrop-blur-sm">Modality 5</div>
+                    </div>
+                    <div class="p-4 text-left">
+                        <h4 class="font-medium text-slate-200">Yet Another Modality</h4>
+                        <p class="text-xs text-slate-500 mt-1">Description of this dataset type.</p>
+                    </div>
+                </div>
             </div>
             
-            <!-- Feature 2 -->
-            <div class="glass-panel p-6 rounded-2xl text-left hover:border-cyan-500/30 transition-colors group">
-                <div class="w-12 h-12 bg-cyan-500/10 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <i data-lucide="zap" class="text-cyan-400"></i>
-                </div>
-                <h3 class="text-lg font-semibold mb-2">Blazing Fast</h3>
-                <p class="text-slate-400 text-sm leading-relaxed">
-                    Optimized for performance with zero runtime overhead. Designed for high-load applications.
-                </p>
-            </div>
-
-            <!-- Feature 3 -->
-            <div class="glass-panel p-6 rounded-2xl text-left hover:border-purple-500/30 transition-colors group">
-                <div class="w-12 h-12 bg-purple-500/10 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <i data-lucide="puzzle" class="text-purple-400"></i>
-                </div>
-                <h3 class="text-lg font-semibold mb-2">Modular</h3>
-                <p class="text-slate-400 text-sm leading-relaxed">
-                    Import only what you need. Tree-shakable architecture tailored for modern bundlers.
-                </p>
-            </div>
+            <p class="mt-8 text-xs text-slate-500">
+                * Images are loaded directly from the <code class="bg-slate-800 px-1 py-0.5 rounded text-slate-400">figs/</code> directory in the repository.
+            </p>
         </div>
 
     </main>
 
     <!-- Footer -->
     <footer class="relative z-10 border-t border-white/5 bg-slate-950">
-            <div class="text-slate-500 text-sm px-6 py-8 flex mb-4 md:mb-0 text-center">
+            <div class="text-slate-500 text-sm px-6 py-8 mb-4 md:mb-0 text-center">
                 &copy; 2025 Axondeepseg. Released under MIT License.
             </div>
     </footer>

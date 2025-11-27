@@ -77,7 +77,7 @@
 <body class="bg-slate-950 text-slate-50 antialiased selection:bg-indigo-500 selection:text-white flex flex-col min-h-screen">
 
     <!-- Background Decoration -->
-    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+    <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         <div class="absolute top-0 left-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl -translate-y-1/2"></div>
         <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-600/10 rounded-full blur-3xl translate-y-1/2"></div>
     </div>
@@ -143,6 +143,11 @@
                  class="h-auto w-auto max-w-full object-contain drop-shadow-[0_0_30px_rgba(79,70,229,0.2)]"
                  onerror="this.style.display='none'">
         </div>
+
+        <!-- Fig caption -->
+        <p class="text-lg md:text-xl text-slate-400 max-w-2xl mb-10 leading-relaxed animate-fade-in-up opacity-0" style="animation-delay: 0.3s;">
+          Scalebars: TEM1: 1 μm; TEM2: 4 μm; SEM1: 30 μm; BF1: (left) 100 μm, (right) 50 μm; BF2: 50 μm.
+        </p>
 
         <!-- Code Snippet / Terminal -->
         <div id="get-started" class="w-full max-w-2xl mx-auto text-left animate-fade-in-up opacity-0" style="animation-delay: 0.5s;">

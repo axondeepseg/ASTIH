@@ -77,9 +77,9 @@
 <body class="bg-slate-950 text-slate-50 antialiased selection:bg-indigo-500 selection:text-white flex flex-col min-h-screen">
 
     <!-- Background Decoration -->
-    <div class="absolute inset-0 z-0 pointer-events-none">
+    <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         <div class="absolute top-0 left-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl -translate-y-1/2"></div>
-        <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-600/10 rounded-full blur-3xl translate-y-1/2"></div>
+        <div class="fixed bottom-0 right-1/4 w-96 h-96 bg-cyan-600/10 rounded-full blur-3xl translate-y-1/2"></div>
     </div>
 
     <!-- Navigation -->
@@ -184,7 +184,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
                 <!-- Image Card 1 -->
-                <div class="glass-panel rounded-xl overflow-hidden glass-card-hover transition-all duration-300 group">
+                <a href="https://doi.org/10.48324/dandi.001436/0.250512.1625" class="block glass-panel rounded-xl overflow-hidden glass-card-hover transition-all duration-300 group">
                     <div class="h-48 bg-slate-800/50 w-full overflow-hidden relative">
 
                         <img src="imgs/TEM1_preview.png" alt="TEM Sample" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" 
@@ -192,10 +192,13 @@
                         <div class="absolute bottom-2 left-2 px-2 py-1 bg-black/60 rounded text-xs text-white backdrop-blur-sm">TEM</div>
                     </div>
                     <div class="p-4 text-left">
-                        <h4 class="font-medium text-slate-200">TEM1</h4>
+                        <div class="flex justify-between items-center">
+                          <h4 class="font-medium text-slate-200">TEM1</h4>
+                          <i data-lucide="external-link" class="w-4 h-4 text-slate-500 group-hover:text-indigo-400 transition-colors"></i>
+                        </div>
                         <p class="text-xs text-slate-500 mt-1">Corpus callosum of control and cuprizone-intoxicated mice</p>
                     </div>
-                </div>
+                </a>
 
                 <!-- Image Card 2 -->
                 <div class="glass-panel rounded-xl overflow-hidden glass-card-hover transition-all duration-300 group">

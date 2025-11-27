@@ -72,6 +72,11 @@
             -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
+
+        .glass-card-hover:hover {
+            background: rgba(30, 41, 59, 0.6);
+            border-color: rgba(99, 102, 241, 0.3); /* Indigo border on hover */
+        }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-50 antialiased selection:bg-indigo-500 selection:text-white flex flex-col min-h-screen">
@@ -201,7 +206,7 @@
                 </a>
 
                 <!-- Image Card 2 -->
-                <div class="glass-panel rounded-xl overflow-hidden glass-card-hover transition-all duration-300 group">
+                <a href="https://doi.org/10.48324/dandi.001350/0.250511.1527" class="block glass-panel rounded-xl overflow-hidden glass-card-hover transition-all duration-300 group">
                     <div class="h-48 bg-slate-800/50 w-full overflow-hidden relative">
 
                         <img src="imgs/TEM2_preview.png" alt="TEM Sample" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
@@ -209,13 +214,16 @@
                         <div class="absolute bottom-2 left-2 px-2 py-1 bg-black/60 rounded text-xs text-white backdrop-blur-sm">TEM</div>
                     </div>
                     <div class="p-4 text-left">
-                        <h4 class="font-medium text-slate-200">TEM2</h4>
+                        <div class="flex justify-between items-center"
+                          <h4 class="font-medium text-slate-200">TEM2</h4>
+                          <i data-lucide="external-link" class="w-4 h-4 text-slate-500 group-hover:text-indigo-400 transition-colors"></i>
+                        </div>
                         <p class="text-xs text-slate-500 mt-1">Corpus callosum of control and SRF conditional knockout mice</p>
                     </div>
-                </div>
+                </a>
 
                 <!-- Image Card 3 -->
-                <div class="glass-panel rounded-xl overflow-hidden glass-card-hover transition-all duration-300 group">
+                <a href="https://doi.org/10.48324/dandi.001442/0.250512.1626" class="block glass-panel rounded-xl overflow-hidden glass-card-hover transition-all duration-300 group">
                     <div class="h-48 bg-slate-800/50 w-full overflow-hidden relative">
 
                         <img src="imgs/SEM1_preview.png" alt="SEM Sample" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
@@ -223,13 +231,16 @@
                         <div class="absolute bottom-2 left-2 px-2 py-1 bg-black/60 rounded text-xs text-white backdrop-blur-sm">SEM</div>
                     </div>
                     <div class="p-4 text-left">
-                        <h4 class="font-medium text-slate-200">SEM1</h4>
+                        <div class="flex justify-between items-center"
+                          <h4 class="font-medium text-slate-200">SEM1</h4>
+                          <i data-lucide="external-link" class="w-4 h-4 text-slate-500 group-hover:text-indigo-400 transition-colors"></i>
+                        </div>
                         <p class="text-xs text-slate-500 mt-1">Rat spinal cord</p>
                     </div>
-                </div>
+                </a>
 
                 <!-- Image Card 4 -->
-                <div class="glass-panel rounded-xl overflow-hidden glass-card-hover transition-all duration-300 group">
+                <a href="https://doi.org/10.48324/dandi.001440/0.250509.1913" class="block glass-panel rounded-xl overflow-hidden glass-card-hover transition-all duration-300 group">
                     <div class="h-48 bg-slate-800/50 w-full overflow-hidden relative">
 
                         <img src="imgs/BF1_preview.png" alt="BF Sample" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
@@ -237,13 +248,16 @@
                         <div class="absolute bottom-2 left-2 px-2 py-1 bg-black/60 rounded text-xs text-white backdrop-blur-sm">BF</div>
                     </div>
                     <div class="p-4 text-left">
-                        <h4 class="font-medium text-slate-200">BF1</h4>
+                        <div class="flex justify-between items-center"
+                          <h4 class="font-medium text-slate-200">BF1</h4>
+                          <i data-lucide="external-link" class="w-4 h-4 text-slate-500 group-hover:text-indigo-400 transition-colors"></i>
+                        </div>
                         <p class="text-xs text-slate-500 mt-1">Peripheral rat nerves at different regeneration stages</p>
                     </div>
-                </div>
+                </a>
 
                 <!-- Image Card 5 -->
-                <div class="glass-panel rounded-xl overflow-hidden glass-card-hover transition-all duration-300 group">
+                <a href="https://doi.org/10.48324/dandi.001630/0.251127.1424" class="block glass-panel rounded-xl overflow-hidden glass-card-hover transition-all duration-300 group">
                     <div class="h-48 bg-slate-800/50 w-full overflow-hidden relative">
 
                         <img src="imgs/BF2_preview.png" alt="BF Sample" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
@@ -251,10 +265,13 @@
                         <div class="absolute bottom-2 left-2 px-2 py-1 bg-black/60 rounded text-xs text-white backdrop-blur-sm">BF</div>
                     </div>
                     <div class="p-4 text-left">
-                        <h4 class="font-medium text-slate-200">BF2</h4>
+                        <div class="flex justify-between items-center"
+                          <h4 class="font-medium text-slate-200">BF2</h4>
+                          <i data-lucide="external-link" class="w-4 h-4 text-slate-500 group-hover:text-indigo-400 transition-colors"></i>
+                        </div>
                         <p class="text-xs text-slate-500 mt-1">Peripheral rabbit nerves in experimental nerve repair study</p>
                     </div>
-                </div>
+                </a>
             </div>
             
             <p class="mt-8 text-xs text-slate-500">

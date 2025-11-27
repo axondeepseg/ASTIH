@@ -22,7 +22,7 @@ Images taken from the BF1 dataset. (A) Example image. Scalebar represent 100 mic
 ![img-bf1](figures/20250515_neurips2025_fig-bf1.png)
 -->
 **Figure 1.** Examples of raw and annotated images for every dataset currently online. Scalebars: TEM1: 1 μm; TEM2: 4 μm; SEM1: 30 μm; BF1: (left) 100 μm, (right) 50 μm; BF2: 50 μm.
-![img-astih](docs/astih_datasets.png)
+![img-astih](docs/imgs/astih_datasets.png)
 
 ## 💾 Getting started
 #### Clone the repo

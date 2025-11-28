@@ -37,5 +37,15 @@
         "sub-uoftRat07"
     ],
     "model_url": "https://github.com/axondeepseg/default-BF-model/releases/download/r20240405/model_seg_rat_axon-myelin_bf_light.zip"
+  },
+  {
+    "name": "BF2",
+    "id": "001630",
+    "url": "https://doi.org/10.48324/dandi.001630/0.251127.1424",
+    "desc": "Bright-Field Images of Rabbit Nerves from Nerve Repair Study with Axon and Myelin Segmentations",
+    "test_set": [
+      "sub-22G132040x3"
+    ],
+    "model_url": "https://github.com/axondeepseg/model_seg_rabbit_axon-myelin_bf/releases/download/r20240405/model_seg_rabbit_axon-myelin_bf_light.zip"
   }
 ]

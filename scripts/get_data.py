@@ -3,6 +3,7 @@ from dandi.download import download, DownloadExisting
 import argparse
 import shutil
 import requests, zipfile, io
+import json
 
 
 class ASTIHDataset:
@@ -22,47 +23,16 @@ class ASTIHDataset:
             raise ValueError("test_set must be a list of subjects or a URL")
         self.model_release = model_url
 
-DATASETS = [
-    ASTIHDataset(
-        name="TEM1",
-        id="001436",
-        url="https://dandiarchive.org/dandiset/001436/0.250512.1625",
-        desc="TEM Images of Corpus Callosum in Control and Cuprizone-Intoxicated Mice with Axon and Myelin Segmentations",
-        test_set=[
-            "sub-nyuMouse26"
-        ],
-        model_url="https://github.com/axondeepseg/default-TEM-model/releases/download/r20240403/model_seg_mouse_axon-myelin_tem_light.zip"
-    ),
-    ASTIHDataset(
-        name="TEM2",
-        id="001350",
-        url="https://dandiarchive.org/dandiset/001350/0.250511.1527",
-        desc="TEM Images of Corpus Callosum in Flox/SRF-cKO Mice",
-        test_set="https://github.com/axondeepseg/data_axondeepseg_srf_testing/archive/refs/tags/r20250513-neurips2025.zip",
-        model_url="https://github.com/axondeepseg/model_seg_unmyelinated_tem/releases/download/r20240708-stanford/model_seg_unmyelinated_stanford_tem_best.zip"
-    ),
-    ASTIHDataset(
-        name="SEM1",
-        id="001442",
-        url="https://dandiarchive.org/dandiset/001442/0.250512.1626",
-        desc="SEM Images of Rat Spinal Cord with Axon and Myelin Segmentations with Myelinated and Unmyelinated Axon Segmentations",
-        test_set=[
-            "sub-rat6"
-        ],
-        model_url="https://github.com/axondeepseg/default-SEM-model/releases/download/r20240403/model_seg_rat_axon-myelin_sem_light.zip"
-    ),
-    ASTIHDataset(
-        name="BF1",
-        id="001440",
-        url="https://dandiarchive.org/dandiset/001440/0.250509.1913",
-        desc="BF Images of Rat Nerves at Different Regeneration Stages with Axon and Myelin Segmentations",
-        test_set=[
-            "sub-uoftRat02",
-            "sub-uoftRat07"
-        ],
-        model_url="https://github.com/axondeepseg/default-BF-model/releases/download/r20240405/model_seg_rat_axon-myelin_bf_light.zip"
-    )
-]
+def load_datasets():
+    datalist_path = Path(__file__).parent / 'dataset_list.json'
+    with open(datalist_path, 'r') as f:
+        datalist = json.load(f)
+
+    astih_dsets = []
+    for dset_metadata in datalist:
+        astih_dsets.append(ASTIHDataset(**dset_metadata))
+
+    return astih_dsets
 
 def download_data(url: str, dst_dir: str):
     """Download data and return path to unzipped data."""
@@ -139,8 +109,10 @@ def main(make_splits: bool):
     data_dir = Path("data")
     data_dir.mkdir(exist_ok=True)
 
+    astih_dsets = load_datasets()
+
     # download dandisets
-    urls = [dataset.url for dataset in DATASETS]
+    urls = [dataset.url for dataset in astih_dsets]
     download(urls, data_dir, existing=DownloadExisting.OVERWRITE_DIFFERENT)
 
     if make_splits:
@@ -148,7 +120,7 @@ def main(make_splits: bool):
         splits_dir = data_dir / "splits"
         splits_dir.mkdir(exist_ok=True)
 
-        for dataset in DATASETS:
+        for dataset in astih_dsets:
             dataset_path = data_dir / dataset.dandi_id
             # Create a directory for each dataset
             dataset_split_dir = splits_dir / dataset.name

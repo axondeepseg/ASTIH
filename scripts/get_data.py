@@ -42,7 +42,7 @@ def download_data(url: str, dst_dir: str):
     z.extractall(dst_dir)
     return Path(dst_dir) / z.namelist()[0]
 
-def index_bids_dataset(data_dir: Path):
+def index_bids_dataset(data_dir: Path, file_ext: str):
     """
     Index the BIDS dataset and return a list of image for which a GT exists.
     """
@@ -51,10 +51,10 @@ def index_bids_dataset(data_dir: Path):
     # Look at derivative files
     for subject_dir in (data_dir / "derivatives" / "labels").glob("sub-*"):
         # every annotated image will have an axonmyelin mask
-        for mask in (subject_dir / "micr").glob("*_seg-axonmyelin-manual.png"):
+        for mask in (subject_dir / "micr").glob(f"*_seg-axonmyelin-manual.png"):
             # Get the corresponding image
             subject = subject_dir.name
-            img_fname = Path(data_dir) / subject / "micr" / mask.name.replace("_seg-axonmyelin-manual.png", ".png")
+            img_fname = Path(data_dir) / subject / "micr" / mask.name.replace(f"_seg-axonmyelin-manual.png", f".{file_ext}")
             assert img_fname.exists(), f"Image {img_fname} does not exist"
             filenames.append(img_fname)
     return filenames
@@ -67,7 +67,11 @@ def split_dataset(dset: ASTIHDataset, dset_path: Path, output_dir: Path):
     test_dir = output_dir / "test"
     train_dir.mkdir(parents=True, exist_ok=True)
     test_dir.mkdir(parents=True, exist_ok=True)
-    index = index_bids_dataset(dset_path)
+
+    # quick and dirty check for file extension
+    nb_tiff_files = len(list(dset_path.rglob('*.tif')))
+    ext = 'png' if nb_tiff_files == 0 else 'tif'
+    index = index_bids_dataset(dset_path, ext)
 
     # utility function to find corresponding GTs
     def find_gts(dset_path, img_path):
@@ -96,7 +100,7 @@ def split_dataset(dset: ASTIHDataset, dset_path: Path, output_dir: Path):
     # If the test set is external, download it
     if dset.test_set_type == 'external':
         testset_path = download_data(dset.test_set_url, dset_path.parent)
-        testset_index = index_bids_dataset(testset_path)
+        testset_index = index_bids_dataset(testset_path, ext)
         for indexed_img in testset_index:
             gts = find_gts(testset_path, indexed_img)
             assert len(gts) > 0, f"No GT found for {indexed_img}"

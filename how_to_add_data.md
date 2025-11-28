@@ -37,5 +37,27 @@ dandi upload
 
 
 ## 🌉 Adding the dataset to ASTIH
+To notify the *get_data.py* script that you added a new dataset, you should edit the following file: `scripts/dataset_list.json`. Create a new entry, like so:
+```json
+  {
+    "name": "BF1",
+    "id": "001440",
+    "url": "https://dandiarchive.org/dandiset/001440/0.250509.1913",
+    "desc": "BF Images of Rat Nerves at Different Regeneration Stages with Axon and Myelin Segmentations",
+    "test_set": [
+        "sub-uoftRat02",
+        "sub-uoftRat07"
+    ],
+    "model_url": "https://github.com/axondeepseg/default-BF-model/releases/download/r20240405/model_seg_rat_axon-myelin_bf_light.zip"
+  }
+```
+For the model URL, be sure to put the link to the released ZIP so that the pipeline can automatically download it later. The `id` field should be the one assigned by DANDI, and the `url` field should contain the dataset DOI. 
 
-TODO: add details
+Finally, please note that the `test_set` field accepts 2 different types:
+1. A **string**: in this case, the value is interpreted as the _URL of an independently-hosted test set_ (external test set). For example, refer to the TEM2 dataset.
+2. A **list**: here, the value is interpreted as a _list of subjects_ (internal test set). These subjects will be used as a test set. This is the default method.
+
+That's it! Your new dataset is now part of the collection. If everything went according to plan, users should now be able to download your dataset and the associated segmentation model, and evaluate the latter on the test set.
+
+## ☔ (Optional) Update ASTIH splash page
+TODO: update this

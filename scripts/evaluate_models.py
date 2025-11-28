@@ -7,7 +7,7 @@ import pandas as pd
 import warnings
 from skimage.measure import label
 
-from get_data import DATASETS
+from get_data import load_datasets
 
 
 def compute_metrics(pred, gt, metric):
@@ -52,7 +52,8 @@ def main():
     data_splits_path = Path("data/splits")
     assert data_splits_path.exists(), "Data splits directory does not exist. Please run get_data.py with --make-splits arg first."
     
-    for dset in DATASETS:
+    datasets = load_datasets
+    for dset in datasets:
         print(f"Evaluation for {dset.name} dataset...")
 
         testset_path = data_splits_path / dset.name / 'test'

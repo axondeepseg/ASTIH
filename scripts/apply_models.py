@@ -6,7 +6,7 @@ from pathlib import Path
 import argparse
 import re
 
-from get_data import DATASETS
+from get_data import load_datasets
 
 
 def find_input_images(datapath: Path):
@@ -15,7 +15,9 @@ def find_input_images(datapath: Path):
 def main(dset_name: None):
     data_splits_path = Path("data/splits")
     assert data_splits_path.exists(), "Data splits directory does not exist. Please run get_data.py with --make-splits arg first."
-    for dset in DATASETS:
+
+    datasets = load_datasets()
+    for dset in datasets:
         if dset_name is not None and dset.name != dset_name:
             continue
 

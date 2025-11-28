@@ -60,4 +60,24 @@ Finally, please note that the `test_set` field accepts 2 different types:
 That's it! Your new dataset is now part of the collection. If everything went according to plan, users should now be able to download your dataset and the associated segmentation model, and evaluate the latter on the test set.
 
 ## ☔ (Optional) Update ASTIH splash page
-TODO: update this
+If you feel like it, you can also update the ASTIH splash page so that your new dataset becomes visible there! To do so, edit the `docs/index.html` file and add an _Image card_. There is a div that contains a block for every dataset. To add yours, simply add a codeblock (see example below). Note that you don't need to care about placement: the way it is currently set up, all blocks appear in a grid with 3 columns, and the HTML should take care of placing your new block in the correct location.
+
+Here is what your new block should look like (modify the text in upper case)
+```html
+<!-- Image Card X+1 -->
+<a href="DOI_OF_YOUR_NEW_DATASET" class="block glass-panel rounded-xl overflow-hidden glass-card-hover transition-all duration-300 group">
+  <div class="h-48 bg-slate-800/50 w-full overflow-hidden relative">
+
+    <img src="imgs/SMALL_SQUARE_IMAGE_FOR_YOUR_DATASET" alt="ALT_TEXT" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+      onerror="this.src='https://placehold.co/600x400/1e293b/475569?text=Image+Missing';">
+    <div class="absolute bottom-2 left-2 px-2 py-1 bg-black/60 rounded text-xs text-white backdrop-blur-sm">MODALITY</div>
+  </div>
+  <div class="p-4 text-left">
+    <div class="flex justify-between items-center"
+      <h4 class="font-medium text-slate-200">SHORT_NAME_OF_THE_DATASET</h4>
+      <i data-lucide="external-link" class="w-4 h-4 text-slate-500 group-hover:text-indigo-400 transition-colors"></i>
+    </div>
+    <p class="text-xs text-slate-500 mt-1">SHORT_SUMMARY_OF_THE_DATASET</p>
+  </div>
+</a>
+```

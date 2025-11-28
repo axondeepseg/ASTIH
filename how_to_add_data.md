@@ -60,7 +60,7 @@ Finally, please note that the `test_set` field accepts 2 different types:
 That's it! Your new dataset is now part of the collection. If everything went according to plan, users should now be able to download your dataset and the associated segmentation model, and evaluate the latter on the test set.
 
 ## ☔ (Optional) Update ASTIH splash page
-If you feel like it, you can also update the ASTIH splash page so that your new dataset becomes visible there! To do so, edit the `docs/index.html` file and add an _Image card_. There is a div that contains a block for every dataset. To add yours, simply add a codeblock (see example below). Note that you don't need to care about placement: the way it is currently set up, all blocks appear in a grid with 3 columns, and the HTML should take care of placing your new block in the correct location.
+If you feel like it, you can also update the [ASTIH splash page](https://axondeepseg.github.io/ASTIH) so that your new dataset becomes visible there (at the bottom)! To do so, edit the `docs/index.html` file and add an _Image card_. There is a div that contains a block for every dataset. To add yours, simply add a codeblock (see example below). Note that you don't need to care about placement: the way it is currently set up, all blocks appear in a grid with 3 columns, and the HTML should take care of placing your new block in the correct location.
 
 Here is what your new block should look like (modify the text in upper case)
 ```html

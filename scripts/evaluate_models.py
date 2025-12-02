@@ -52,7 +52,7 @@ def main():
     data_splits_path = Path("data/splits")
     assert data_splits_path.exists(), "Data splits directory does not exist. Please run get_data.py with --make-splits arg first."
     
-    datasets = load_datasets
+    datasets = load_datasets()
     for dset in datasets:
         print(f"Evaluation for {dset.name} dataset...")
 

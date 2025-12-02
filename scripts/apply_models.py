@@ -1,4 +1,4 @@
-from AxonDeepSeg.segment import get_model_type, get_model_input_format
+from AxonDeepSeg.segment import get_model_type, get_model_input_format, prepare_inputs
 from AxonDeepSeg.apply_model import axon_segmentation
 from AxonDeepSeg.ads_utils import get_imshape, imread, imwrite
 from torch import cuda
@@ -9,8 +9,8 @@ import re
 from get_data import load_datasets
 
 
-def find_input_images(datapath: Path):
-    return [p for p in datapath.glob("*.png") if '_seg-' not in p.name]
+def find_input_images(datapath: Path, ext_found: str):
+    return [p for p in datapath.glob(f"*.{ext_found}") if '_seg-' not in p.name]
 
 def main(dset_name: None):
     data_splits_path = Path("data/splits")
@@ -22,25 +22,29 @@ def main(dset_name: None):
             continue
 
         testset_path = data_splits_path / dset.name / 'test'
-        input_imgs = find_input_images(testset_path)
+        # quick and dirty check for fileformat
+        nb_tiff_files = len(list(testset_path.rglob('*.tif')))
+        ext_found = 'png' if nb_tiff_files == 0 else 'tif'
+        input_imgs = find_input_images(testset_path, ext_found)
 
         print(f"Applying model to {dset.name} dataset ({len(input_imgs)} images).")
         pattern = r"([^/]+)(?=\.zip$)"
         model_name = re.search(pattern, dset.model_release).group(1)
         model_path = Path("models") / model_name
 
-        # ensure input imgs have the expected nb of channels; if not, overwrite input
         (fileformat, n_channels) = get_model_input_format(model_path)
-        for img_path in input_imgs:
-            imshape = get_imshape(str(img_path))
-            needs_conversion = not (imshape[-1] == n_channels)
-            if needs_conversion:
-                print(f"Converting {img_path} to proper format.")
-                img = imread(str(img_path))
-                imwrite(str(img_path), img, fileformat)
+        path_inputs_sanitized = prepare_inputs(input_imgs, fileformat, n_channels)
+        # ensure input imgs have the expected nb of channels; if not, overwrite input
+        # for img_path in input_imgs:
+        #     imshape = get_imshape(str(img_path))
+        #     needs_conversion = not (imshape[-1] == n_channels)
+        #     if needs_conversion:
+        #         print(f"Converting {img_path} to proper format.")
+        #         img = imread(str(img_path))
+        #         imwrite(str(img_path), img, fileformat)
 
         axon_segmentation(
-            path_inputs=input_imgs,
+            path_inputs=path_inputs_sanitized,
             path_model=model_path,
             model_type=get_model_type(model_path),
             gpu_id=0 if cuda.is_available() else -1,

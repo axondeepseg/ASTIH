@@ -61,8 +61,15 @@ def main():
         for gt in gts:
             # Get the corresponding image
             img_fname = gt.name.replace("_seg-axonmyelin-manual.png", ".png")
+            potential_grayscale_img_fname = img_fname.replace('.png', '_grayscale.png')
             ax_pred_fname = gt.name.replace("_seg-axonmyelin-manual.png", "_seg-axon.png")
             my_pred_fname = gt.name.replace("_seg-axonmyelin-manual.png", "_seg-myelin.png")
+
+            # check if image was converted to grayscale prior to inference
+            if Path(potential_grayscale_img_fname).exists():
+                img_fname = potential_grayscale_img_fname
+                ax_pred_fname = ax_pred_fname.replace('_seg', '_grayscale_seg')
+                my_pred_fname = my_pred_fname.replace('_seg', '_grayscale_seg')
             assert (testset_path / ax_pred_fname).exists() and (testset_path / my_pred_fname).exists(), f"Predictions not found for {img_fname}"
 
             # load GT

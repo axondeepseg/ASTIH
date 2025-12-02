@@ -6,6 +6,19 @@ import requests, zipfile, io
 import json
 
 
+ASTIH_ASCII = '''
+                      █████     ███  █████     
+                     ░░███     ░░░  ░░███      
+    ██████    █████  ███████   ████  ░███████  
+   ░░░░░███  ███░░  ░░░███░   ░░███  ░███░░███ 
+    ███████ ░░█████   ░███     ░███  ░███ ░███ 
+   ███░░███  ░░░░███  ░███ ███ ░███  ░███ ░███ 
+  ░░████████ ██████   ░░█████  █████ ████ █████
+   ░░░░░░░░ ░░░░░░     ░░░░░  ░░░░░ ░░░░ ░░░░░ 
+axon segmentation training initiative for histology
+                                             
+'''
+
 class ASTIHDataset:
     def __init__(self, name, id, url, desc, test_set, model_url):
 
@@ -109,6 +122,8 @@ def split_dataset(dset: ASTIHDataset, dset_path: Path, output_dir: Path):
 
 
 def main(make_splits: bool):
+    print(ASTIH_ASCII)
+
     # Create a directory to store the downloaded data
     data_dir = Path("data")
     data_dir.mkdir(exist_ok=True)

@@ -1,11 +1,12 @@
 from pathlib import Path
-from monai.metrics import DiceMetric, PanopticQualityMetric, MeanIoU
+from monai.metrics import DiceMetric, MeanIoU, compute_panoptic_quality
 import torch
 import cv2
 import numpy as np
 import pandas as pd
 import warnings
-from skimage.measure import label
+from skimage import measure
+from AxonDeepSeg.morphometrics.compute_morphometrics import get_watershed_segmentation
 
 from get_data import load_datasets
 
@@ -20,13 +21,53 @@ def compute_metrics(pred, gt, metric):
     Returns:
         the computed metric
     """
-    if isinstance(metric, PanopticQualityMetric):
-        metric.reset()
-        metric(pred, gt)
-        value = metric.aggregate().mean()
-    else:
-        value = metric(pred, gt)
+    value = metric(pred, gt)
     return value.item()
+
+def make_panoptic_input(instance_map):
+    """
+    Converts a (H, W) instance map into the (B, 2, H, W) format
+    required by MONAI PanopticQualityMetric.
+    """
+    semantic_map = torch.tensor((instance_map > 0)).unsqueeze(dim=0).int()
+    instance_map = torch.tensor(instance_map).unsqueeze(dim=0).int()
+    panoptic_map = torch.cat([semantic_map, instance_map], dim=1)
+
+    return panoptic_map
+
+def compute_confusion(inst_pred, inst_gt):
+    """
+    Computes the confusion matrix (TP, FP, FN, sum of IoU)
+    Args:
+        inst_pred:  instance segmentation prediction
+        inst_gt:    instance segmentation ground-truth
+    Returns:
+        TP:         true positive count,
+        FP:         false positive count,
+        FN:         false negative count
+        sumIoU:     sum of IoU used to compute Panoptic Quality
+    """
+    y_pred_2ch = make_panoptic_input(inst_pred)
+    y_true_2ch = make_panoptic_input(inst_gt)
+    confusion = compute_panoptic_quality(
+        pred=y_pred_2ch,
+        gt=y_true_2ch,
+        metric_name='rq',
+        match_iou_threshold=0.5,
+        output_confusion_matrix=True
+    )
+
+    return confusion
+
+def apply_watershed(ax_mask, my_mask):
+    axon_objects = measure.regionprops(measure.label(ax_mask))
+    centroids = (
+        [int(props.centroid[0]) for props in axon_objects],
+        [int(props.centroid[1]) for props in axon_objects]
+    )
+
+    return get_watershed_segmentation(ax_mask, my_mask, centroids)
+
 
 def extract_binary_masks(mask):
     '''
@@ -90,7 +131,7 @@ def main():
                 ('myelin', my_pred, gt_my)
             ]
 
-            # compute metrics
+            # compute pixel-wise metrics
             for class_name, pred, gt in classwise_pairs:
                 row = {
                     'dataset': dset.name,
@@ -98,17 +139,15 @@ def main():
                     'class': class_name
                 }
                 for metric in metrics:
-                    if isinstance(metric, PanopticQualityMetric):
-                        # For PanopticQualityMetric, we need to convert the masks to labels
-                        pred_labels = torch.from_numpy(label(pred.numpy().astype(np.uint16))).float()
-                        gt_labels = torch.from_numpy(label(gt.numpy().astype(np.uint16))).float()
-                        pred_labels = torch.stack([pred_labels, pred], dim=1)
-                        gt_labels = torch.stack([gt_labels, gt], dim=1)
-                        value = compute_metrics(pred_labels, gt_labels, metric)
-                    else:
-                        value = compute_metrics([pred], [gt], metric)
+                    value = compute_metrics([pred], [gt], metric)
                     row[metric.__class__.__name__] = value
                 df = pd.concat([df, pd.DataFrame([row])], ignore_index=True)
+
+            # compute detection metrics
+            inst_gt = apply_watershed(gt_ax, gt_my)
+            inst_pred = apply_watershed(ax_pred, my_pred)
+            detection_metrics = compute_confusion(inst_pred, inst_gt)
+            print(detection_metrics)
 
     # Export the dataframe to a CSV file
     df.to_csv('metrics.csv', index=False)

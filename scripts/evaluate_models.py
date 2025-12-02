@@ -66,7 +66,7 @@ def main():
             my_pred_fname = gt.name.replace("_seg-axonmyelin-manual.png", "_seg-myelin.png")
 
             # check if image was converted to grayscale prior to inference
-            if Path(potential_grayscale_img_fname).exists():
+            if (testset_path / potential_grayscale_img_fname).exists():
                 img_fname = potential_grayscale_img_fname
                 ax_pred_fname = ax_pred_fname.replace('_seg', '_grayscale_seg')
                 my_pred_fname = my_pred_fname.replace('_seg', '_grayscale_seg')

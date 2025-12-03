@@ -7,6 +7,7 @@ import pandas as pd
 import warnings
 from skimage import measure
 from AxonDeepSeg.morphometrics.compute_morphometrics import get_watershed_segmentation
+from stardist.matching import matching
 
 from get_data import load_datasets
 
@@ -38,13 +39,19 @@ def make_panoptic_input(instance_map):
 def compute_confusion(inst_pred, inst_gt):
     """
     Computes the confusion matrix (TP, FP, FN, sum of IoU)
+    < IMPORTANT! >  Do NOT use this function! This is an extremly slow 
+                    implementation, relying on MONAI's panoptic quality 
+                    metric. Also, this algorithm diverges with images with 
+                    1000+ axons. Instead, `stardist` has a much faster 
+                    matching function based on sparse graph optimization
+                    instead of dense matrix operations.
     Args:
         inst_pred:  instance segmentation prediction
         inst_gt:    instance segmentation ground-truth
     Returns:
         TP:         true positive count,
         FP:         false positive count,
-        FN:         false negative count
+        FN:         false negative count,
         sumIoU:     sum of IoU used to compute Panoptic Quality
     """
     y_pred_2ch = make_panoptic_input(inst_pred)
@@ -88,7 +95,9 @@ def main():
     metrics = [DiceMetric(), MeanIoU()] #, PanopticQualityMetric(num_classes=1)]
     metric_names = [metric.__class__.__name__ for metric in metrics]
     columns = ['dataset', 'image', 'class'] + metric_names
-    df = pd.DataFrame(columns=columns)
+    pixelwise_df = pd.DataFrame(columns=columns)
+    columns_detection = ['dataset', 'image', 'TP', 'FP', 'FN', 'precision', 'recall', 'accuracy', 'f1']
+    detection_df = pd.DataFrame(columns=columns_detection)
     
     data_splits_path = Path("data/splits")
     assert data_splits_path.exists(), "Data splits directory does not exist. Please run get_data.py with --make-splits arg first."
@@ -141,17 +150,31 @@ def main():
                 for metric in metrics:
                     value = compute_metrics([pred], [gt], metric)
                     row[metric.__class__.__name__] = value
-                df = pd.concat([df, pd.DataFrame([row])], ignore_index=True)
+                pixelwise_df = pd.concat([pixelwise_df, pd.DataFrame([row])], ignore_index=True)
 
             # compute detection metrics
             inst_gt = apply_watershed(gt_ax, gt_my)
             inst_pred = apply_watershed(ax_pred, my_pred)
-            detection_metrics = compute_confusion(inst_pred, inst_gt)
-            print(detection_metrics)
+            stats = matching(inst_gt, inst_pred, thresh=0.5)
+            detection_row = {
+                'dataset':      dset.name,
+                'image':        img_fname,
+                'TP':           stats.tp,
+                'FP':           stats.fp, 
+                'FN':           stats.fn, 
+                'precision':    stats.precision,
+                'recall':       stats.recall,
+                'accuracy':     stats.accuracy,
+                'f1':           stats.f1
+            }
+            print(f'detection metrics: {detection_row}')
+            detection_df = pd.concat([detection_df, pd.DataFrame([detection_row])], ignore_index=True)
 
     # Export the dataframe to a CSV file
-    df.to_csv('metrics.csv', index=False)
+    pixelwise_df.to_csv('metrics.csv', index=False)
     print("Metrics computed and saved to metrics.csv")
+    detection_df.to_csv('det_metrics.csv', index=False)
+    print("Detection metrics computed and saved to det_metrics.csv")
 
 
 if __name__ == "__main__":

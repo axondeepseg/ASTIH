@@ -27,7 +27,7 @@ Images taken from the BF1 dataset. (A) Example image. Scalebar represent 100 mic
 ## 💾 Getting started
 #### Clone the repo
 ```
-git clone https://github.com/axondeeepseg/ASTIH.git
+git clone https://github.com/axondeepseg/ASTIH.git
 cd ASTIH
 ```
 

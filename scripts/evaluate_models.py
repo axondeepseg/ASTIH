@@ -12,6 +12,19 @@ from stardist.matching import matching
 from get_data import load_datasets
 
 
+def aggregate_det_metrics(detection_df: pd.DataFrame):
+    agg_dict = {
+        'TP': 'sum',
+        'FP': 'sum',
+        'FN': 'sum',
+        'precision': 'mean',
+        'recall': 'mean',
+        'accuracy': 'mean',
+        'f1': 'mean'
+    }
+    detection_df.drop('image', axis=1)
+    return detection_df.groupby('dataset').agg(agg_dict).reset_index()
+
 def compute_metrics(pred, gt, metric):
     """
     Compute the given metric for a single image
@@ -155,7 +168,7 @@ def main():
             # compute detection metrics
             inst_gt = apply_watershed(gt_ax, gt_my)
             inst_pred = apply_watershed(ax_pred, my_pred)
-            stats = matching(inst_gt, inst_pred, thresh=0.5)
+            stats = matching(inst_gt, inst_pred, thresh=0.3)
             detection_row = {
                 'dataset':      dset.name,
                 'image':        img_fname,
@@ -175,6 +188,7 @@ def main():
     print("Metrics computed and saved to metrics.csv")
     detection_df.to_csv('det_metrics.csv', index=False)
     print("Detection metrics computed and saved to det_metrics.csv")
+    print(aggregate_det_metrics(detection_df))
 
 
 if __name__ == "__main__":

@@ -33,6 +33,13 @@ def find_all_images_and_masks(dir_path: Path, mask_suffix: str = '_seg-axonmyeli
         image_file = mask_file.with_name(mask_file.name.replace(mask_suffix, '.png'))
         if image_file.exists():
             image_mask_pairs.append((image_file, mask_file))
+        else: 
+            # the image might actually be in TIFF format
+            image_file_tiff = mask_file.with_name(mask_file.name.replace(mask_suffix, '.tif'))
+            if image_file_tiff.exists():
+                image_mask_pairs.append((image_file_tiff, mask_file))
+            else:
+                print(f'Warning: No corresponding image found for mask {mask_file}')
     return image_mask_pairs
 
 def convert_axonmyelin_mask_to_cellpose(mask_path: Path, output_path: Path):

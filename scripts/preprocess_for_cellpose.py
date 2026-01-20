@@ -70,7 +70,7 @@ def convert_axonmyelin_mask_to_cellpose(mask_path: Path, output_path: Path):
 
     imwrite(str(output_path), cellpose_mask, use_16bit=True)
 
-def main(data_dir: Path, output_dir: Path):
+def preprocess_dataset(data_dir: Path, output_dir: Path):
     train_dir = data_dir / 'train'
     test_dir = data_dir / 'test'
     
@@ -101,4 +101,4 @@ if __name__ == '__main__':
     data_dir = Path(args.data_dir)
     output_dir = Path(args.output_dir) if args.output_dir else Path('.') / 'cellpose_preprocessed'
     
-    main(data_dir, output_dir)
+    preprocess_dataset(data_dir, output_dir)

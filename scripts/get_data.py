@@ -5,6 +5,8 @@ import shutil
 import requests, zipfile, io
 import json
 
+from preprocess_for_cellpose import preprocess_dataset
+
 
 ASTIH_ASCII = '''
                       █████     ███  █████     
@@ -121,7 +123,7 @@ def split_dataset(dset: ASTIHDataset, dset_path: Path, output_dir: Path):
 
 
 
-def main(make_splits: bool):
+def main(make_splits: bool, preprocess_cellpose: bool = False):
     print(ASTIH_ASCII)
 
     # Create a directory to store the downloaded data
@@ -149,6 +151,12 @@ def main(make_splits: bool):
             print(f"Splitting {dataset.name} dataset...")
             split_dataset(dataset, dataset_path, dataset_split_dir)
 
+            if preprocess_cellpose:
+                print(f"Preprocessing {dataset.name} dataset for Cellpose...")
+                output_cellpose_dir = data_dir / "cellpose_pipeline" / f'cellpose_preprocessed_{dataset.name}'
+                output_cellpose_dir.mkdir(parents=True, exist_ok=True)
+                preprocess_dataset(dataset_split_dir, output_cellpose_dir)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Download and split datasets.")
@@ -157,6 +165,15 @@ if __name__ == "__main__":
         action="store_true",
         help="Make splits for the datasets.",
     )
+    parser.add_argument(
+        "--preprocess-cellpose",
+        action="store_true",
+        default=False,
+        help="Preprocess the datasets for Cellpose training.",
+    )
     args = parser.parse_args()
 
-    main(args.make_splits)
+    if args.preprocess_cellpose and not args.make_splits:
+        parser.error("--preprocess-cellpose requires --make-splits to be set.")
+
+    main(args.make_splits, args.preprocess_cellpose)

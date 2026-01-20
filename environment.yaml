@@ -6,7 +6,7 @@ dependencies:
       - dandi
       - mlcroissant
       - torch<2.4.0
-      - axondeepseg==5.0.4
+      - axondeepseg==5.3.0
       - monai
       - opencv-python==4.8.1.78
       - stardist

@@ -2,13 +2,6 @@ from pathlib import Path
 from AxonDeepSeg.ads_utils import imread, get_imshape
 from get_data import load_datasets
 
-# REMOVE THIS COMMENT BLOCK
-# we want to compute some statistics on each dataset, such as 
-# - [x] number of images,
-# - [x] number of labelled images, 
-# - [x] average image size,
-# - [x] average nb of axons per image and 
-# - [x] average foreground-background ratio.
 
 def compute_dataset_statistics(datapath: Path):
     # the total nb of images corresponds to the length of the samples.tsv file

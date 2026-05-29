@@ -61,4 +61,4 @@ We welcome contributions of new data that align with the goals of ASTIH. If you 
 The code and documentation in this repository are released under the [MIT License](LICENSE). The individual datasets within ASTIH may have their own specific licenses, which will be clearly stated in their respective descriptions.
 
 ## 🔗 Citation
-[WIP]
+A. Collin, M. Boudreau, and J. Cohen-Adad, "_ASTIH: A collection of axon and myelin segmentation datasets from multiple histology studies_", in Proceedings of The 9th International Conference on Medical Imaging with Deep Learning, 08--10 Jul 2026, vol. 315, pp. 3608–3627.

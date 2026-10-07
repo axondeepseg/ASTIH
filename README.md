@@ -50,7 +50,7 @@ python scripts/apply_models.py
 ```
 
 ## 🔬 Key features
-1. A comprehensive, publicly accessible collection of four histology datasets specifically designed for developing and evaluation axon and myelin segmentation models. This collection encompasses unprecedented diversity, featuring over 60,000 manually segmented fibers across three microscopy modalities (TEM, SEM, optical), two species, three regions of the nervous system and various biological conditions.
+1. A comprehensive, publicly accessible collection of four histology datasets specifically designed for developing and evaluating axon and myelin segmentation models. This collection encompasses unprecedented diversity, featuring over 60,000 manually segmented fibers across three microscopy modalities (TEM, SEM, optical), two species, three regions of the nervous system and various biological conditions.
 2. Detailed annotations for every datasets with standardized boundary delineation between adjacent fibers, enabling both semantic and instance segmentation tasks.
 3. Baseline state-of-the-art segmentation models for every dataset, providing a standardized framework for comparative evaluation of future methods. These models are publicly available and can all be used within the [AxonDeepSeg](www.github.com/axondeepseg/axondeepseg) open-source software.
 
